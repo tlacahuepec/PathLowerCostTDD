@@ -5,4 +5,6 @@ package mx.tlacahuepec.pathlowestcost.interfaces;
  */
 public interface Grid {
 
+    int getCellCost(int[] currentCell);
+
 }
