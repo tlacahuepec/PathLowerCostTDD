@@ -1,6 +1,11 @@
 package mx.tlacahuepec.pathlowestcost.implementation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import mx.tlacahuepec.pathlowestcost.interfaces.Grid;
+import mx.tlacahuepec.pathlowestcost.interfaces.Path;
 
 /**
  * Grid implementation to store 2D Navigable Arrays
@@ -16,6 +21,7 @@ public class NavigableGrid implements Grid {
 
     @Override
     public int getCellCost(int[] currentCell) {
+        // TODO: try catch
         int x = currentCell[0];
         int y = currentCell[1];
         return matrix[x][y];
@@ -60,7 +66,105 @@ public class NavigableGrid implements Grid {
         return nextCell;
     }
 
-    
+    public int[] getNextSameLevelCell(int[] currentCell) {
+        int[] nextCell = null;
+        int nextColumn = currentCell[1] + 1;
+        //TODO: call hasNextColumn just once
+        if (hasNextColumn(currentCell)) {
+            nextCell = new int[]{currentCell[0], nextColumn};
+        }
+        return nextCell;
+    }
+
+    // TODO: store recursive path
+    public int[] getMinimumNextAdjacentCell(int[] currentCell) {
+
+        int[] topLevelCell = getNextTopLevelCell(currentCell);
+        int topLevelCellCost = getCellCost(topLevelCell);
+
+        int[] bottomLevelCell = getNextBottomLevelCell(currentCell);
+        int bottomLevelCellCost = getCellCost(bottomLevelCell);
+
+        int[] sameLevelCell = getNextSameLevelCell(currentCell);
+        int sameLevelCellCost = getCellCost(sameLevelCell);
+
+        //TODO: first check 3 equals
+        if (topLevelCellCost == bottomLevelCellCost && bottomLevelCellCost == sameLevelCellCost) {
+            // T=B=S
+            return null;
+        }
+
+        // SameLevel comparison
+        if (topLevelCellCost == bottomLevelCellCost) {
+            if (sameLevelCellCost < topLevelCellCost) {
+                return sameLevelCell;
+            } else {
+                // (T=B) < S
+                return null;
+            }
+        }
+        // BottomLevel comparison
+        if (sameLevelCellCost == topLevelCellCost) {
+            if (bottomLevelCellCost < sameLevelCellCost) {
+                return bottomLevelCell;
+            } else {
+                // T=S < B
+                return null;
+            }
+        }
+        // TopLevel comparison
+        if (sameLevelCellCost == bottomLevelCellCost) {
+            if (topLevelCellCost < sameLevelCellCost) {
+                return topLevelCell;
+            } else {
+                // S=B < T
+                return null;
+            }
+        }
+        if (topLevelCellCost < bottomLevelCellCost) {
+            if (sameLevelCellCost < topLevelCellCost) {
+                return sameLevelCell;
+            } else {
+                return topLevelCell;
+            }
+        }
+        if (bottomLevelCellCost < topLevelCellCost) {
+            if (sameLevelCellCost < bottomLevelCellCost) {
+                return sameLevelCell;
+            } else {
+                return bottomLevelCell;
+            }
+        }
+        if (sameLevelCellCost < topLevelCellCost) {
+            if (bottomLevelCellCost < sameLevelCellCost) {
+                return bottomLevelCell;
+            } else {
+                return sameLevelCell;
+            }
+        }
+        if (topLevelCellCost < sameLevelCellCost) {
+            if (bottomLevelCellCost < topLevelCellCost) {
+                return bottomLevelCell;
+            } else {
+                return topLevelCell;
+            }
+        }
+        if (sameLevelCellCost < bottomLevelCellCost) {
+            if (topLevelCellCost < sameLevelCellCost) {
+                return topLevelCell;
+            } else {
+                return sameLevelCell;
+            }
+        }
+        if (bottomLevelCellCost < sameLevelCellCost) {
+            if (topLevelCellCost < bottomLevelCellCost) {
+                return topLevelCell;
+            } else {
+                return bottomLevelCell;
+            }
+        }
+        return null;
+    }
 
     public int[] getNextAvailableCell(int[] currentCell) {
         int[] nextCell = null;
@@ -73,6 +177,5 @@ public class NavigableGrid implements Grid {
         }
         return null;
     }
-
 
 }
